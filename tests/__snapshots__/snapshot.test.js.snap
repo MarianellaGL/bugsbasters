@@ -1,0 +1,32 @@
+// BugsBasters Snapshot v1
+
+exports[`Snapshot Testing > matches array snapshot 1`] = `[
+  "apple",
+  "banana",
+  "cherry"
+]`;
+
+exports[`Snapshot Testing > matches complex nested object 1`] = `{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice"
+    },
+    {
+      "id": 2,
+      "name": "Bob"
+    }
+  ],
+  "meta": {
+    "total": 2,
+    "page": 1
+  }
+}`;
+
+exports[`Snapshot Testing > matches object snapshot 1`] = `{
+  "name": "John Doe",
+  "age": 30,
+  "email": "john@example.com"
+}`;
+
+exports[`Snapshot Testing > matches string snapshot 1`] = `Hello, World!`;

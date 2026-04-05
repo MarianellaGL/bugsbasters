@@ -4,6 +4,7 @@ import type { TestFunction, TestOptions, TestCase, DescribeBlock } from './types
 // This is necessary because ESM modules can have separate instances
 const REGISTRY_KEY = '__bugsbasters_registry__';
 const FILE_PATH_KEY = '__bugsbasters_filePath__';
+const CURRENT_TEST_KEY = '__bugsbasters_currentTest__';
 
 interface GlobalRegistry {
   rootDescribe: DescribeBlock;
@@ -35,6 +36,14 @@ function getCurrentFilePath(): string {
 
 export function setCurrentFilePath(filePath: string): void {
   (globalThis as any)[FILE_PATH_KEY] = filePath;
+}
+
+export function getCurrentTestName(): string | null {
+  return (globalThis as any)[CURRENT_TEST_KEY] || null;
+}
+
+export function setCurrentTestName(name: string | null): void {
+  (globalThis as any)[CURRENT_TEST_KEY] = name;
 }
 
 export function getTestRegistry(): DescribeBlock {

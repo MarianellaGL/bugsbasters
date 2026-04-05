@@ -1,5 +1,7 @@
 import type { AssertionResult } from './types';
 import { loadNativeModule } from './native';
+import { matchSnapshot } from './snapshot';
+import { getCurrentTestName } from './test';
 
 // Try to load native module, fall back to pure JS
 const native = loadNativeModule();
@@ -449,6 +451,47 @@ export class Expectation<T> {
       `object to match ${stringify(expected)}`,
       expected,
       obj
+    );
+  }
+
+  /**
+   * Match against a stored snapshot
+   */
+  toMatchSnapshot(): void {
+    const testName = getCurrentTestName();
+    if (!testName) {
+      throw new AssertionError('toMatchSnapshot() must be called inside a test');
+    }
+
+    const result = matchSnapshot(testName, this.value);
+    if (this.isNot) {
+      if (result.pass) {
+        throw new AssertionError('Expected not to match snapshot');
+      }
+    } else {
+      if (!result.pass) {
+        throw new AssertionError(result.message);
+      }
+    }
+  }
+
+  /**
+   * Match against an inline snapshot
+   */
+  toMatchInlineSnapshot(inlineSnapshot?: string): void {
+    if (inlineSnapshot === undefined) {
+      throw new AssertionError('Inline snapshot not provided. Run with --update-snapshots to create it.');
+    }
+
+    const serialized = typeof this.value === 'string'
+      ? this.value
+      : JSON.stringify(this.value, null, 2);
+
+    this.assert(
+      serialized === inlineSnapshot,
+      `value to match inline snapshot`,
+      inlineSnapshot,
+      serialized
     );
   }
 }

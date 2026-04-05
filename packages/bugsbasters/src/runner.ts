@@ -3,8 +3,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { pathToFileURL } from 'node:url';
 import type { TestResult, TestSummary, DescribeBlock, TestCase } from './types';
-import { getTestRegistry, clearTestRegistry, setCurrentFilePath } from './test';
+import { getTestRegistry, clearTestRegistry, setCurrentFilePath, setCurrentTestName } from './test';
 import { cleanupMocks } from './mock';
+import { initSnapshotState, saveSnapshots, clearSnapshotState, setUpdateSnapshots, resetSnapshotCounter } from './snapshot';
 import { loadNativeModule } from './native';
 import { generateHtmlReport as generateHtmlReportImpl } from './html-report';
 
@@ -18,6 +19,9 @@ export interface RunnerOptions {
   outputFile?: string;
   rootDir?: string;
   timeout?: number;
+  updateSnapshots?: boolean;
+  coverage?: boolean;
+  coverageDir?: string;
 }
 
 const DEFAULT_PATTERNS = [
@@ -49,6 +53,9 @@ export class TestRunner {
 
   async run(): Promise<TestSummary> {
     const startTime = Date.now();
+
+    // Configure snapshot mode
+    setUpdateSnapshots(this.options.updateSnapshots || false);
 
     // Print header
     this.printHeader();
@@ -109,6 +116,9 @@ export class TestRunner {
     clearTestRegistry();
     setCurrentFilePath(filePath);
 
+    // Initialize snapshot state for this file
+    initSnapshotState(filePath);
+
     try {
       // Import the test file
       const fileUrl = pathToFileURL(filePath).href;
@@ -119,6 +129,9 @@ export class TestRunner {
       // Run all registered tests
       const registry = getTestRegistry();
       await this.runDescribeBlock(registry, []);
+
+      // Save snapshots if any were created/updated
+      saveSnapshots();
     } catch (error: any) {
       // File-level error
       this.results.push({
@@ -132,6 +145,9 @@ export class TestRunner {
         },
       });
       this.printTestResult(this.results[this.results.length - 1]);
+    } finally {
+      // Clear snapshot state
+      clearSnapshotState();
     }
   }
 
@@ -203,6 +219,10 @@ export class TestRunner {
     const startTime = Date.now();
     let error: any = null;
 
+    // Set current test name for snapshot matching
+    setCurrentTestName(fullName);
+    resetSnapshotCounter();
+
     try {
       // Run beforeEach hooks
       for (const hook of beforeEachHooks) {
@@ -232,6 +252,9 @@ export class TestRunner {
 
       // Clean up mocks
       cleanupMocks();
+
+      // Clear current test name
+      setCurrentTestName(null);
     }
 
     const durationMs = Date.now() - startTime;

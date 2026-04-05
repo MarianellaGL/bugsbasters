@@ -8,6 +8,9 @@ A fast, simple testing library with Rust-powered performance and a clean JavaScr
 - **Simple API** - Clean, intuitive test syntax inspired by Jest
 - **Beautiful Reports** - Terminal colors, HTML reports, JUnit XML
 - **Powerful Mocking** - Simple `mock()` and `spy()` functions
+- **Snapshot Testing** - Capture and compare output snapshots
+- **Watch Mode** - Auto-run tests on file changes
+- **Code Coverage** - Built-in V8 coverage support
 - **CI Ready** - Auto-detects GitHub Actions, GitLab CI, etc.
 
 ## Installation
@@ -108,18 +111,65 @@ const spy = spy(object, 'method').returns(10);
 spy.restore(); // restore original
 ```
 
+### Snapshot Testing
+
+```typescript
+// Capture output as snapshot
+expect(data).toMatchSnapshot();
+
+// First run creates the snapshot file
+// Subsequent runs compare against it
+```
+
+Update snapshots:
+
+```bash
+npx bugsbasters run --update-snapshots
+```
+
+## Watch Mode
+
+Automatically re-run tests when files change:
+
+```bash
+npx bugsbasters watch
+```
+
+Keyboard shortcuts in watch mode:
+- `Enter` - Re-run tests
+- `u` - Update snapshots
+- `a` - Run all tests
+- `q` - Quit
+
+## Code Coverage
+
+Collect coverage data:
+
+```bash
+npx bugsbasters run --coverage
+```
+
 ## CLI Options
 
 ```bash
 bugsbasters run [pattern]
 
 Options:
-  -p, --parallel        Run tests in parallel (default: true)
-  --no-parallel         Run tests sequentially
-  -r, --reporter <type> Reporter: terminal, html, json, junit
-  -o, --output <file>   Output file for report
-  --root <dir>          Root directory for test discovery
-  -t, --timeout <ms>    Test timeout (default: 5000)
+  -p, --parallel         Run tests in parallel (default: true)
+  --no-parallel          Run tests sequentially
+  -r, --reporter <type>  Reporter: terminal, html, json, junit
+  -o, --output <file>    Output file for report
+  --root <dir>           Root directory for test discovery
+  -t, --timeout <ms>     Test timeout (default: 5000)
+  -u, --update-snapshots Update snapshot files
+  --coverage             Collect code coverage
+
+bugsbasters watch [pattern]
+
+Options:
+  --root <dir>           Root directory
+  -t, --timeout <ms>     Test timeout
+  --no-clear             Don't clear screen between runs
 ```
 
 ## Reporters

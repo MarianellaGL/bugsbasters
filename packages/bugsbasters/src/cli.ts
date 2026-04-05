@@ -2,6 +2,7 @@
 
 import { cac } from 'cac';
 import { run } from './runner';
+import { watch } from './watcher';
 import type { RunnerOptions } from './runner';
 
 const cli = cac('bugsbasters');
@@ -16,6 +17,9 @@ cli
   .option('-o, --output <file>', 'Output file for report')
   .option('--root <dir>', 'Root directory for test discovery', { default: process.cwd() })
   .option('-t, --timeout <ms>', 'Test timeout in milliseconds', { default: 5000 })
+  .option('-u, --update-snapshots', 'Update snapshots', { default: false })
+  .option('--coverage', 'Collect code coverage', { default: false })
+  .option('--coverage-dir <dir>', 'Directory for coverage output', { default: 'coverage' })
   .action(async (pattern: string | undefined, options: any) => {
     const runnerOptions: RunnerOptions = {
       pattern,
@@ -24,6 +28,9 @@ cli
       outputFile: options.output,
       rootDir: options.root,
       timeout: Number(options.timeout),
+      updateSnapshots: options.updateSnapshots,
+      coverage: options.coverage,
+      coverageDir: options.coverageDir,
     };
 
     try {
@@ -91,6 +98,30 @@ test.each([
     }
 
     console.log('\n  Run tests with: \x1b[36mnpx bugsbasters run\x1b[0m\n');
+  });
+
+cli
+  .command('watch [pattern]', 'Run tests in watch mode')
+  .option('-p, --parallel', 'Run tests in parallel', { default: true })
+  .option('--no-parallel', 'Run tests sequentially')
+  .option('--root <dir>', 'Root directory for test discovery', { default: process.cwd() })
+  .option('-t, --timeout <ms>', 'Test timeout in milliseconds', { default: 5000 })
+  .option('--no-clear', 'Do not clear screen between runs')
+  .action(async (pattern: string | undefined, options: any) => {
+    const watchOptions = {
+      pattern,
+      parallel: options.parallel,
+      rootDir: options.root,
+      timeout: Number(options.timeout),
+      clearScreen: options.clear !== false,
+    };
+
+    try {
+      await watch(watchOptions);
+    } catch (error: any) {
+      console.error('\x1b[31mError:\x1b[0m', error.message);
+      process.exit(1);
+    }
   });
 
 cli.help();

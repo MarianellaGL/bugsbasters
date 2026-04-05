@@ -1,0 +1,15 @@
+[package]
+name = "bugsbasters-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Core testing engine for BugsBasters"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+rayon = { workspace = true }
+similar = { workspace = true }
+ignore = { workspace = true }
+owo-colors = { workspace = true }
+thiserror = { workspace = true }

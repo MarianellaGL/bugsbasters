@@ -1,0 +1,19 @@
+[package]
+name = "bugsbasters-napi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Node.js bindings for BugsBasters"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+bugsbasters-core = { path = "../bugsbasters-core" }
+napi = { version = "2", default-features = false, features = ["napi4", "serde-json"] }
+napi-derive = "2"
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[build-dependencies]
+napi-build = "2"

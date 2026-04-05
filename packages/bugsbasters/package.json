@@ -1,0 +1,57 @@
+{
+  "name": "bugsbasters",
+  "version": "0.1.0",
+  "description": "Fast, simple testing library with Rust-powered performance",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "bugsbasters": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "native"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:native": "napi build --platform --release ../../crates/bugsbasters-napi",
+    "prepublishOnly": "npm run build",
+    "test": "node ./dist/cli.js run"
+  },
+  "keywords": [
+    "test",
+    "testing",
+    "runner",
+    "assertion",
+    "mock"
+  ],
+  "author": "decodadev02",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/decodadev02/bugsbasters"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.6.0",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "cac": "^6.7.14",
+    "glob": "^10.3.0"
+  },
+  "napi": {
+    "name": "bugsbasters-native",
+    "triples": {
+      "defaults": true
+    }
+  }
+}

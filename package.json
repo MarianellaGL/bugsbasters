@@ -1,0 +1,15 @@
+{
+  "name": "bugsbasters-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w bugsbasters",
+    "build:native": "npm run build:native -w bugsbasters",
+    "test": "npm run test -w bugsbasters"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

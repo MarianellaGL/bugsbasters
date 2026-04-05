@@ -36,7 +36,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/decodadev02/bugsbasters"
+    "url": "https://github.com/MarianellaGL/bugsbasters"
+  },
+  "homepage": "https://github.com/MarianellaGL/bugsbasters#readme",
+  "bugs": {
+    "url": "https://github.com/MarianellaGL/bugsbasters/issues"
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.6.0",

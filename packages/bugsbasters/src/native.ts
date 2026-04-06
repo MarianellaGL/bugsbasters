@@ -4,9 +4,25 @@ import * as fs from 'fs';
 let nativeModule: any = null;
 let loadAttempted = false;
 
-// The native module filename - kept as variable to avoid static analysis
-const NATIVE_MODULE_NAME = 'bugsbasters-native';
-const NATIVE_MODULE_EXT = '.node';
+function getPlatformTriple(): string {
+  const platform = process.platform;
+  const arch = process.arch;
+
+  // Map Node.js platform/arch to Rust target triples
+  if (platform === 'win32') {
+    if (arch === 'x64') return 'win32-x64-msvc';
+    if (arch === 'arm64') return 'win32-arm64-msvc';
+    if (arch === 'ia32') return 'win32-ia32-msvc';
+  } else if (platform === 'darwin') {
+    if (arch === 'x64') return 'darwin-x64';
+    if (arch === 'arm64') return 'darwin-arm64';
+  } else if (platform === 'linux') {
+    if (arch === 'x64') return 'linux-x64-gnu';
+    if (arch === 'arm64') return 'linux-arm64-gnu';
+  }
+
+  return `${platform}-${arch}`;
+}
 
 export function loadNativeModule(): any {
   if (loadAttempted) {
@@ -21,7 +37,8 @@ export function loadNativeModule(): any {
   }
 
   try {
-    const nativeFileName = NATIVE_MODULE_NAME + NATIVE_MODULE_EXT;
+    const triple = getPlatformTriple();
+    const nativeFileName = `bugsbasters-native.${triple}.node`;
 
     // Try to find the native module in various locations
     const possiblePaths = [

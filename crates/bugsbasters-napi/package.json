@@ -1,0 +1,10 @@
+{
+  "name": "bugsbasters-native",
+  "version": "0.1.0",
+  "napi": {
+    "name": "bugsbasters-native",
+    "triples": {
+      "defaults": true
+    }
+  }
+}
